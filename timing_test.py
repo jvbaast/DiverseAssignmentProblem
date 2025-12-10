@@ -45,10 +45,10 @@ def plot_timings(sizes):
         arr_approx += [np.average(timings)]
         timings = fileio.read_timings("timing/exact/" + str(size))
         arr_exact += [np.average(timings)]
-        std_approx += [np.std(timings)]
-        std_exact += [np.std(timings)]
-    plt.errorbar(sizes, arr_approx, std_approx, linestyle='None', marker='^')
-    plt.errorbar(sizes, arr_exact, std_exact, linestyle='None', marker='^')
+    #     std_approx += [np.std(timings)]
+    #     std_exact += [np.std(timings)]
+    # plt.errorbar(sizes, arr_approx, std_approx, linestyle='None', marker='^')
+    # plt.errorbar(sizes, arr_exact, std_exact, linestyle='None', marker='^')
     fig, axs = plt.subplots(ncols=2)
     axs[1].set_xscale("log", base=2)
     axs[1].set_yscale("log", base=10)

@@ -1,4 +1,4 @@
-import fileio, exact, algorithm
+import fileio, exact, algorithm, subroutines
 
 # Calculate pareto front for given instances
 def preprocess_pareto(divs, sizes):
@@ -40,6 +40,7 @@ def calculate_set_area(points, min_div, min_cost):
         result += (points[i][0] - points[i-1][0]) * (points[i][1] - min_div)
     return result
 
+
 # Calculate summary of stats
 def calculate_pareto_stats(divs, sizes):
     pareto_fraction = []
@@ -62,8 +63,8 @@ def calculate_pareto_stats(divs, sizes):
                 exact = fileio.read_points("pareto/exact/" + inst_name)
 
                 (n, G, D) = fileio.load_file("data/" + inst_name)
-                min_cost = algorithm.get_minimum_cost(G, n)
-                min_div = algorithm.get_minimum_diversity(D, n)
+                min_cost = subroutines.get_minimum_cost(G, n)
+                min_div = subroutines.get_minimum_diversity(D, n)
 
                 frac1 = calculate_set_area(approx[1], min_div, min_cost)
                 frac2 = calculate_set_area(exact[1], min_div, min_cost)

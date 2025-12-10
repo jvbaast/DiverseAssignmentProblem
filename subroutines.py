@@ -99,19 +99,35 @@ def get_dominating_set(points):
             dominating_set += [point]
     return dominating_set
 
-# Draw a scatter plot
-def plot_points(points1, points2):
-    plt.scatter(*zip(*points1))
-    plt.scatter(*zip(*points2), color='red')
-    plt.xlabel("Matching weights")
-    plt.ylabel("Diversity")
-    plt.show()
+# Gets the minimum diversity weight in D=(R,B)
+def get_minimum_diversity(D, n):
 
-# Draw a graph in plt
-def draw_graph(G):
-    top = nx.bipartite.sets(G)[0]
-    pos = nx.bipartite_layout(G, top)
-    nx.draw(G, pos=pos, with_labels = True)
-    labels = nx.get_edge_attributes(G,'weight')
-    nx.draw_networkx_edge_labels(G,pos,edge_labels=labels,label_pos=0.3)
-    plt.show()
+    # Calculate optimal 2-matching with inverse weights
+    D = -D
+    two_matching = solve_k_card_2_matching(D, n)
+    D = -D
+
+    # Calculate diversity
+    diversity = 0
+    for i in range(n):
+        for j in range(i,n):
+            if two_matching.get((i,j), 0) > 0:
+                diversity += D[i][j] * int(two_matching[(i,j)])
+
+    return diversity
+
+# Gets the minimum assignment weight in G=(L,A+B)
+def get_minimum_cost(G, n):
+
+    # Solve transportation
+    supplies = 2 * np.ones(n)
+    demands = 2 * np.ones(n)
+    flow = solve_transportation(-G, supplies, demands)
+
+    # Calculate weight of matchings
+    cost = 0
+    for i in range(n):
+        for j in range(n,2*n):
+            cost += flow[i][j] * G[i][j-n]
+
+    return cost

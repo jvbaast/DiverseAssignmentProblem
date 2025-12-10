@@ -10,7 +10,7 @@ generate_data.generate_datasets(sizes) # Comment out if already generated
 divs = ["disjoint_div", "distance_div", "uniform_div", "random_div"]
 
 pareto_tests.run_test(divs, sizes) # Comment out if already run
-pareto_tests.calculate_pareto_stats(divs, sizes)
+pareto_tests.calculate_pareto_stats(divs, sizes) # Results in pareto/stats folder
 
 print()
 
