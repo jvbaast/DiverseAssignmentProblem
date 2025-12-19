@@ -65,21 +65,23 @@ def solve_ip(G, D, n, alpha):
 
 # Recursively calculate pareto front using exact algorithm
 def get_pareto_front_recursive(G, D, n, start, end, depth):
-    if depth == 10 or start[0] - end[0] < 0.5 and start[1] - end[1] < 0.5:
-        return []
     
-    alpha = (start[2] + end[2]) / 2
+    # Calculate new alpha such that both start and end have same value
+    alpha = (end[1] - start[1]) / (start[0] - end[0] + end[1] - start[1])
     ass, cost, div = solve_ip(G, D, n, alpha)
-    list1 = get_pareto_front_recursive(G, D, n, start, (cost, div, alpha), depth+1)
-    list2 = get_pareto_front_recursive(G, D, n, (cost, div, alpha), end, depth+1)
+    list1 = []; list2 = []
 
+    # If new solution is different from both start and end, we recurse
+    if (start[0] - cost > 0.5 or div - start[1] > 0.5) and (cost - end[0] > 0.5 or end[1] - div > 0.5):
+        list1 = get_pareto_front_recursive(G, D, n, start, (cost, div, alpha), depth+1)
+        list2 = get_pareto_front_recursive(G, D, n, (cost, div, alpha), end, depth+1)
     return list1 + list2 + [(cost, div)]
 
 # Calling function for recursive process
 def get_pareto_front(G, D, n):
-    ass, cost1, div1 =  solve_ip(G, D, n, 0)
-    ass, cost2, div2 =  solve_ip(G, D, n, 1)
+    ass, cost1, div1 =  solve_ip(G, D, n, 1)
+    ass, cost2, div2 =  solve_ip(G, D, n, 0)
     result = [(cost1, div1), (cost2, div2)]
-    result += get_pareto_front_recursive(G, D, n, (cost1, div1, 0), (cost2, div2, 1), 0)
+    result += get_pareto_front_recursive(G, D, n, (cost1, div1, 1), (cost2, div2, 0), 0)
     dominating_set = subroutines.get_dominating_set(result)
     return dominating_set
