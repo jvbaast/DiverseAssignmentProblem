@@ -45,8 +45,8 @@ This file implements the timing tests. It again has two main modes:
 This files contains the functions to generate the input files for the tests. There are four types of input files:
 1. Disjointness: Specifies the diversity weights such that a solution with maximum diversity weight corresponds to two disjoint matchings.
 2. Diversity by distance: The diversity weights are based on how far the indices of two vertices are separated.
-3. Two integers: The diversity weights are uniformly sampled from the set $\{-1,1\}$.
-4. Random integers: The diversity weights are uniformly sampled from the set $\{k\in\N\mid 0\leq k \leq 100\}$.
+3. Two integers: The diversity weights are uniformly sampled from the set $\\{-1,1\\}$.
+4. Random integers: The diversity weights are uniformly sampled from the set $\\{k\in\mathbb{N}\mid 0\leq k \leq 100\\}$.
 
 #### fileio.py
 This file contains the functions for reading and writing solutions, instances and tests results to files.
