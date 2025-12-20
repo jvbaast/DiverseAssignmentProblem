@@ -2,6 +2,7 @@ venv/
 pareto/
 timing/
 .vscode/
+figures/
 __pycache__/
 gurobi.env
 gurobi.log

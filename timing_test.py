@@ -3,6 +3,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import scienceplots
 
 # Calculate n+! points using exact algorithm
 # We do only n+1 points because so does the heuristic
@@ -38,29 +39,42 @@ def run_timing_test(divs, sizes):
 def plot_timings(sizes):
     arr_approx = []
     arr_exact = []
-    std_approx = []
-    std_exact = []
     for size in sizes:
         timings = fileio.read_timings("timing/approx/" + str(size))
         arr_approx += [np.average(timings)]
         timings = fileio.read_timings("timing/exact/" + str(size))
         arr_exact += [np.average(timings)]
-    #     std_approx += [np.std(timings)]
-    #     std_exact += [np.std(timings)]
-    # plt.errorbar(sizes, arr_approx, std_approx, linestyle='None', marker='^')
-    # plt.errorbar(sizes, arr_exact, std_exact, linestyle='None', marker='^')
-    fig, axs = plt.subplots(ncols=2)
-    axs[1].set_xscale("log", base=2)
-    axs[1].set_yscale("log", base=10)
-    for ax in axs:
-        ax.set_xlabel("Size of instance")
-        ax.set_ylabel("Running time (s)")
-        ax.set_xticks(sizes)
+
+    plot_params = dict (
+        xlabel="Size of instance", 
+        ylabel="Running time (s)",
+        xticks=sizes,
+    )
+
+    ### Switch styles of LaTeX is installed
+    # with plt.style.context(["science", "ieee"]):
+    with plt.style.context(["science", "no-latex"]):
+        fig, ax = plt.subplots()
+        ax.plot(sizes, arr_approx, marker='s', ms=3, label="Approximation")
+        ax.plot(sizes, arr_exact, marker='s', ms=3, label="Exact")
+        ax.set(**plot_params)
+        ax.margins(0.05)
+        ax.legend()
+        fig.savefig("figures/timings_linear.pdf", dpi=300)
+        plt.close()
+
+    ### Switch styles of LaTeX is installed
+    # with plt.style.context(["science", "ieee"]):
+    with plt.style.context(["science", "no-latex"]):
+        fig, ax = plt.subplots()
+        ax.plot(sizes, arr_approx, marker='s', ms=3, label="Approximation")
+        ax.plot(sizes, arr_exact, marker='s', ms=3, label="Exact")
+        # ax.set_xscale("log", base=2)
+        ax.set_yscale("log", base=10)
+        ax.set(**plot_params)
+        ax.margins(0.05)
         ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda y, _: '{:.3g}'.format(y)))
         ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: '{:.3g}'.format(x)))
-        ax.plot(sizes, arr_approx, marker='o',label="Approximation")
-        ax.plot(sizes, arr_exact, marker='o',label="Exact")
-        ax.legend(loc="upper left")
-    fig.set_figheight(4.8 * 1.5)
-    fig.set_figwidth(2 * 6.4 * 1.5)
-    plt.show()
+        ax.legend()
+        fig.savefig("figures/timings_log.pdf", dpi=300)
+        plt.close()
