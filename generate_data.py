@@ -4,8 +4,12 @@ import numpy as np
 import fileio
 
 # Generate matrix of bipartite graph with random weights
-def generate_data(n):
+def generate_data_100(n):
     return np.random.random_integers(1, 100, (n, n))
+
+# Generate matrix of bipartite graph with random weights
+def generate_data_10(n):
+    return np.random.random_integers(1, 10, (n, n))
 
 # Generate diversity graph with value -1 and 1
 def generate_uniform_diversity(n):
@@ -17,7 +21,7 @@ def generate_uniform_diversity(n):
             matrix[j][i] = matrix[i][j]
     return matrix
 
-# Generate diversity with real numbers
+# Generate diversity with uniform numbers
 def generate_random_diversity(n):
     matrix = np.random.random_integers(1, 100, (n,n))
     matrix = matrix + matrix.T
@@ -38,15 +42,27 @@ def generate_diversiy_by_distance(n):
 def generate_datasets(sizes=[4,8,16,32,64,128]):
     for size in sizes:
         for i in range(10):
-            G = generate_data(size)
+            G = generate_data_10(size)
             D = generate_random_diversity(size)
-            fileio.write_file("data/random_div_"+ str(size) + "_" + str(i), size, G, D)
-            G = generate_data(size)
+            fileio.write_file("data/random_div_10_"+ str(size) + "_" + str(i), size, G, D)
+            G = generate_data_10(size)
             D = generate_disjoint_diversity(size)
-            fileio.write_file("data/disjoint_div_"+ str(size) + "_" + str(i), size, G, D)
-            G = generate_data(size)
+            fileio.write_file("data/disjoint_div_10_"+ str(size) + "_" + str(i), size, G, D)
+            G = generate_data_10(size)
             D = generate_diversiy_by_distance(size)
-            fileio.write_file("data/distance_div_"+ str(size) + "_" + str(i), size, G, D)
-            G = generate_data(size)
+            fileio.write_file("data/distance_div_10_"+ str(size) + "_" + str(i), size, G, D)
+            G = generate_data_10(size)
             D = generate_uniform_diversity(size)
-            fileio.write_file("data/uniform_div_"+ str(size) + "_" + str(i), size, G, D)
+            fileio.write_file("data/uniform_div_10_"+ str(size) + "_" + str(i), size, G, D)
+            G = generate_data_100(size)
+            D = generate_random_diversity(size)
+            fileio.write_file("data/random_div_100_"+ str(size) + "_" + str(i), size, G, D)
+            G = generate_data_100(size)
+            D = generate_disjoint_diversity(size)
+            fileio.write_file("data/disjoint_div_100_"+ str(size) + "_" + str(i), size, G, D)
+            G = generate_data_100(size)
+            D = generate_diversiy_by_distance(size)
+            fileio.write_file("data/distance_div_100_"+ str(size) + "_" + str(i), size, G, D)
+            G = generate_data_100(size)
+            D = generate_uniform_diversity(size)
+            fileio.write_file("data/uniform_div_100_"+ str(size) + "_" + str(i), size, G, D)

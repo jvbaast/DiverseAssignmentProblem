@@ -116,6 +116,21 @@ def get_minimum_diversity(D, n):
 
     return diversity
 
+# Gets the maximum diversity weight in D=(R,B)
+def get_maximum_diversity(D, n):
+
+    # Calculate optimal 2-matching with inverse weights
+    two_matching = solve_k_card_2_matching(D, n)
+
+    # Calculate diversity
+    diversity = 0
+    for i in range(n):
+        for j in range(i,n):
+            if two_matching.get((i,j), 0) > 0:
+                diversity += D[i][j] * int(two_matching[(i,j)])
+
+    return diversity
+
 # Gets the minimum assignment weight in G=(L,A+B)
 def get_minimum_cost(G, n):
 
@@ -123,6 +138,22 @@ def get_minimum_cost(G, n):
     supplies = 2 * np.ones(n)
     demands = 2 * np.ones(n)
     flow = solve_transportation(-G, supplies, demands)
+
+    # Calculate weight of matchings
+    cost = 0
+    for i in range(n):
+        for j in range(n,2*n):
+            cost += flow[i][j] * G[i][j-n]
+
+    return cost
+
+# Gets the maximum assignment weight in G=(L,A+B)
+def get_maximum_cost(G, n):
+
+    # Solve transportation
+    supplies = 2 * np.ones(n)
+    demands = 2 * np.ones(n)
+    flow = solve_transportation(G, supplies, demands)
 
     # Calculate weight of matchings
     cost = 0

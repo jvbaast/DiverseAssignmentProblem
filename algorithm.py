@@ -1,6 +1,7 @@
 ### File implementing the approximation algorithm described in the paper
 import subroutines
 import numpy as np
+import time
 
 # Runs the approximation algorithm in a (G, D, k) instance
 def run_algorithm(G, D, n, k):
@@ -26,7 +27,7 @@ def run_algorithm(G, D, n, k):
                 demands[j*n + k] = two_matching.get((j,k), 0)
 
     flow = subroutines.solve_transportation(H, supplies, demands) 
-
+    
     # Create a matching from the transportation
     edge_matching = []
     for i in range(n):

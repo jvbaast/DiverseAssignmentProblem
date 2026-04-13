@@ -12,7 +12,7 @@ def setup_env():
     print()
 
 # Solve ILP formulation of DAP
-def solve_ip(G, D, n, alpha):
+def solve_ip(G, D, n, min_div):
     model = gp.Model("IP", env=env)
     
     I = range(n)
@@ -31,11 +31,12 @@ def solve_ip(G, D, n, alpha):
         model.addConstr((gp.quicksum(variables[i,j,k] for i in I for k in K)) == 1, "c1,"+str(j))
         model.addConstr((gp.quicksum(variables[i,k,j] for i in I for k in K)) == 1, "c2,"+str(j))
     
-    model.setObjective(
-        gp.quicksum(
-            variables[i,j,k] * (alpha * (G[i][j] + G[i][k]) + (1-alpha) * D[j][k]) for i in I for j in J for k in K
-        ), GRB.MAXIMIZE
-    )
+    # Add diversity constraint
+    model.addConstr((gp.quicksum(variables[i,j,k] * D[j][k] for i in I for j in J for k in K)) >= min_div, "c_div")
+
+    # # Set objective
+    model.setObjective(gp.quicksum(variables[i,j,k] * (G[i][j] + G[i][k]) for i in I for j in J for k in K), GRB.MAXIMIZE)
+
     model.optimize()
 
     # Read results from model
@@ -47,7 +48,7 @@ def solve_ip(G, D, n, alpha):
                 assignment[nums[0]][nums[1]] += 1
                 assignment[nums[0]][nums[2]] += 1
     except:
-        print("Alpha value: " + str(alpha))
+        print("Minimum diverstiy: " + str(min_div))
         raise Exception("Gurobi crashed")
 
     # Calculate diversity
@@ -63,25 +64,35 @@ def solve_ip(G, D, n, alpha):
 
     return assignment, weight, diversity
 
-# Recursively calculate pareto front using exact algorithm
-def get_pareto_front_recursive(G, D, n, start, end, depth):
-    
-    # Calculate new alpha such that both start and end have same value
-    alpha = (end[1] - start[1]) / (start[0] - end[0] + end[1] - start[1])
-    ass, cost, div = solve_ip(G, D, n, alpha)
-    list1 = []; list2 = []
+def search_interval_recursive(G, D, n, start, end, min_div, max_div):
+    ass, cost, div = solve_ip(G, D, n, (min_div + max_div) / 2)
+    if (cost != start[0] or div != start[1]) and (cost > end[0]):
+        return (cost, div)
+    if (cost != start[0] or div != start[1]) and abs(max_div - min_div) > 0.5:
+        return search_interval_recursive(G, D, n, start, end, min_div, (min_div + max_div) / 2)
+    if (cost != end[0] or div != end[1]) and abs(max_div - min_div) > 0.5:
+        return search_interval_recursive(G, D, n, start, end, (min_div + max_div) / 2, max_div)
+    return start
 
-    # If new solution is different from both start and end, we recurse
-    if (start[0] - cost > 0.5 or div - start[1] > 0.5) and (cost - end[0] > 0.5 or end[1] - div > 0.5):
-        list1 = get_pareto_front_recursive(G, D, n, start, (cost, div, alpha), depth+1)
-        list2 = get_pareto_front_recursive(G, D, n, (cost, div, alpha), end, depth+1)
-    return list1 + list2 + [(cost, div)]
+# Recursively calculate pareto front using exact algorithm
+def get_pareto_front_recursive(G, D, n, start, end):
+    result = []
+    sol = search_interval_recursive(G, D, n, start, end, start[1], end[1])
+    if (sol[0] != start[0] or sol[1] != start[1]):
+        result += [sol]
+        if (start[0] > sol[0]):
+            result += get_pareto_front_recursive(G, D, n, start, sol)
+        result += get_pareto_front_recursive(G, D, n, sol, end)
+    return result
 
 # Calling function for recursive process
 def get_pareto_front(G, D, n):
-    ass, cost1, div1 =  solve_ip(G, D, n, 1)
-    ass, cost2, div2 =  solve_ip(G, D, n, 0)
-    result = [(cost1, div1), (cost2, div2)]
-    result += get_pareto_front_recursive(G, D, n, (cost1, div1, 1), (cost2, div2, 0), 0)
+    min_div = subroutines.get_minimum_diversity(D, n)
+    max_div = subroutines.get_maximum_diversity(D, n)
+    ass, max_cost, div = solve_ip(G, D, n, min_div)
+    ass, min_cost, div = solve_ip(G, D, n, max_div)
+    result = [(max_cost, min_div), (min_cost, max_div)]
+    if max_cost > min_cost:
+        result += get_pareto_front_recursive(G, D, n, (max_cost, min_div), (min_cost, max_div))
     dominating_set = subroutines.get_dominating_set(result)
     return dominating_set
