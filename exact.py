@@ -86,7 +86,7 @@ def get_pareto_front_recursive(G, D, n, start, end):
     return result
 
 # Calling function for recursive process
-def get_pareto_front(G, D, n):
+def get_pareto_front_rec(G, D, n):
     min_div = subroutines.get_minimum_diversity(D, n)
     max_div = subroutines.get_maximum_diversity(D, n)
     ass, max_cost, div = solve_ip(G, D, n, min_div)
@@ -94,5 +94,16 @@ def get_pareto_front(G, D, n):
     result = [(max_cost, min_div), (min_cost, max_div)]
     if max_cost > min_cost:
         result += get_pareto_front_recursive(G, D, n, (max_cost, min_div), (min_cost, max_div))
+    dominating_set = subroutines.get_dominating_set(result)
+    return dominating_set
+
+# Function for getting the Pareto front
+def get_pareto_front(G, D, n):
+    min_div = subroutines.get_minimum_diversity(D, n)
+    max_div = subroutines.get_maximum_diversity(D, n)
+    result = []
+    for i in range(min_div, max_div+1):
+        _, cost, div = solve_ip(G, D, n, i)
+        result += [(cost, div)]
     dominating_set = subroutines.get_dominating_set(result)
     return dominating_set

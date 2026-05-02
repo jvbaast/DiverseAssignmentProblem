@@ -9,13 +9,14 @@ def preprocess_pareto(assignments, divs, sizes):
                 for i in range(10):
                     inst += 1
                     inst_name = div + "_" + str(asgn) + "_"+ str(size) + "_" + str(i)
+                    process_pareto_file(inst_name)
                     print("\rCalculating exact solution: " + inst_name + " (" + str(inst) + "/" + str(10 * len(assignments) * len(sizes) * len(divs)) + ")", end='', flush=True)                
                     (n, G, D) = fileio.load_file("data/" + inst_name)
                     pareto = exact.get_pareto_front(G, D, n)
                     fileio.write_points("pareto/exact/" + inst_name, pareto)
     print()
 
-# Calculate pareto front for given instances
+# Calculate pareto front for input file
 def process_pareto_file(file_name):
     print("\rCalculating exact solution: " + file_name)                
     (n, G, D) = fileio.load_file("data/" + file_name)

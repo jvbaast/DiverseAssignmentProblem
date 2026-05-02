@@ -1,6 +1,7 @@
 venv/
 pareto/
 timing/
+old scripts/
 .vscode/
 figures/
 __pycache__/
@@ -9,3 +10,7 @@ gurobi.log
 notes.txt
 unused.py
 TODO
+test.bat
+pareto_left.py
+data.py
+data.sh
