@@ -29,7 +29,7 @@ Contains the subroutines used by ```Algorithm.py``` including:
 The graph algorithms in these subroutines are implemented using NetworkX [2].
 
 #### exact.py
-This file contains the implementation of the exact algorithm. This includes the implementation of the ILP using Gurobi [1] and a recursion to get the Pareto front.
+This file contains the implementation of the exact algorithm. This includes the implementation of the ILP using Gurobi [1] and an iterative procedure to get the Pareto front.
 
 #### pareto_tests.py
 This file implements the tests for the relative area measure and the number of solutions. It has two main modes:
@@ -37,7 +37,7 @@ This file implements the tests for the relative area measure and the number of s
 2. Statistic calculation: Calculates the results of the tests for the given instances. This can be used to calculate statistics for different subsets of instances. 
 
 #### timing_test.py
-This file implements the timing tests. It again has two main modes:
+This file implements the timing tests. These were removed from the paper, but are still provided. It again has two main modes:
 1. Preprocessing: Runs the timing tests for the given parameters. This takes a lot of time, so do not run it unless needed.
 2. Statistic calculation: Calculates the results of the tests for the given instances. This can be used to calculate statistics for different subsets of instances. 
 
