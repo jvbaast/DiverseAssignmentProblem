@@ -1,1 +1,0 @@
-start /affinity 032 python main.py

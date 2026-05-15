@@ -80,6 +80,8 @@ def calculate_pareto_stats(assignments, divs, sizes):
                     exact = fileio.read_points("pareto/exact/" + inst_name)
 
                     (n, G, D) = fileio.load_file("data/" + inst_name)
+
+                    # Area dominated is determined with lower bounds on cost and diversity.
                     min_cost = subroutines.get_minimum_cost(G, n)
                     min_div = subroutines.get_minimum_diversity(D, n)
 

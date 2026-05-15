@@ -16,9 +16,7 @@ pareto_tests.calculate_pareto_stats(assignments, divs, sizes) # Results in paret
 
 print()
 
+# Timings were not included in the final paper, but still provided in the code
 timing_test.run_timing_test_pareto(assignments, divs, sizes) # Comment out if already run
 timing_test.run_timing_test_instance(assignments, divs, sizes) # Comment out if already run
 timing_test.plot_timings(sizes)
-
-(n, G, D) = fileio.load_file("data/distance_div_128_5")
-ass, cost, div = algorithm.run_algorithm(G, D, n, n//2)
