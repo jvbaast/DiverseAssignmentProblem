@@ -2,9 +2,11 @@ import generate_data
 import timing_test, pareto_tests
 import exact, algorithm,fileio
 
+### Lighter version of main.py to see if everything works
+
 exact.setup_env()
 
-sizes = [4, 8, 16, 32, 64]
+sizes = [4, 8]
 
 # generate_data.generate_datasets(sizes) # Comment out if already generated
 

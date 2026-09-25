@@ -48,6 +48,13 @@ def read_points(name):
             result += [(arr[0], arr[1])]
     return n, result
 
+# Function for reading a list of points from file
+def read_point_float(name):
+    f = open(name, "r")
+    n = float(f.readline())
+    f.close()
+    return n
+
 # Function for reading timing results from file
 def read_timings(name):
     full_arr = np.loadtxt(name)
