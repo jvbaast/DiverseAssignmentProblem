@@ -11,8 +11,8 @@ def run_algorithm(G, D, n, k):
 
     # Make a transportation from 2-matching to L
     H = np.zeros((n, n*n))
-    supplies = np.zeros(n)
-    demands = np.zeros(n*n)
+    supplies = np.zeros(n, dtype=int)
+    demands = np.zeros(n*n, dtype=int)
 
     # Create auxiliary graph weights and demands
     for i in range(n):
@@ -31,13 +31,13 @@ def run_algorithm(G, D, n, k):
     # Create a matching from the transportation
     edge_matching = []
     for i in range(n):
-        for j in range(n, n*n+n):
+        for j in range(n*n):
             if flow[i][j] > 0:
-                edge_matching += [(i,((j-n) // n, (j-n) % n), flow[i][j])]
+                edge_matching += [(i,(j // n, j % n), flow[i][j])]
 
     # Matching remaining nodes using a transportation
-    supplies = 2 * np.ones(n)
-    demands = 2 * np.ones(n)
+    supplies = 2 * np.ones(n, dtype=int)
+    demands = 2 * np.ones(n, dtype=int)
 
     assignment = np.zeros((n,n))
     for match in edge_matching:
@@ -58,9 +58,9 @@ def run_algorithm(G, D, n, k):
     # Make matching based on transportation
     matching = []
     for i in range(n):
-        for j in range(n, 2*n):
+        for j in range(n):
             if flow[i][j] > 0:
-                matching += [(i,j-n,flow[i][j])]
+                matching += [(i,j,flow[i][j])]
 
     # Make assignment based on matching
     for match in matching:

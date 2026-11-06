@@ -4,89 +4,135 @@
 
 import networkx as nx
 import numpy as np
+from scipy.optimize import linear_sum_assignment
 import matplotlib.pyplot as plt
 
 # Solves the k-cardinality constrained 2-matching problem
-def solve_k_card_2_matching(matrix, k):
+def solve_k_card_2_matching(matrix, k, maximize=True):
 
+    matrix = np.asarray(matrix)
     n = len(matrix)
     total = np.sum(np.abs(matrix)) + 1 # Arbitrary big number
 
     # Initialize bipartite graph with 4n - 2k nodes
-    B = nx.Graph()
-    B.add_nodes_from(list(range(n)), bipartite=0)
-    B.add_nodes_from(list(range(n,2*n)), bipartite=1)
-    B.add_nodes_from([x + 2 * n for x in list(range(n-k))], bipartite=0)
-    B.add_nodes_from([x + 3 * n - k for x in list(range(n-k))], bipartite=1)
+    graph = np.zeros((2*n - k, 2*n - k), dtype=int)
+    graph[:n, :n] = matrix
 
-    edges = []
+    # Add dummy nodes
+    graph[:n, n:] = total # high weight between real and dummys
+    graph[n:, n:] = total 
+    graph[n:, n:] = -total # low weigt between dummys
 
-    # Add edges (u,v') and (v,u') for (u,v) in G to create assignment problem
-    for i in range(n):
-        for j in range(n):
-            edges += [(i, j+n, -matrix[i][j]), (j, i+n, -matrix[i][j])]
-
-    # Add low weight edges between dummy nodes
-    for i in range(n-k):
-        for j in range(n-k):
-            edges += [(i + 2*n, j + 3*n-k, total)]
-
-    # Between dummy nodes and real nodes add high weight edges (forced to pick)
-    for i in range(n-k):
-        for j in range(n):
-            edges += [(i + 2*n, j + n, -total), (j, i + 3*n-k, -total)]
-
-    B.add_weighted_edges_from(edges)
-
-    # Solve min-weight matching with inverse weights, so max-weight matching
-    matching = nx.bipartite.minimum_weight_full_matching(B)
+    # Solve assignment problem
+    rows, cols = linear_sum_assignment(graph, maximize=maximize)
 
     # Create a dictionary of edges based on the resulting matching, where value is multiplicity
     result = {}
-    for v1, v2 in matching.items():
-        if v1 >= n or v2 >= 2*n:
-            continue
-        v2 -= n
-        if v1 <= v2:
-            result[(v1,v2)] = result.get((v1,v2), 0) + 1
-        else:
-            result[(v2,v1)] = result.get((v2,v1), 0) + 1
+    for row, col in zip(rows, cols):
+        if row < n and col < n:
+            if row <= col:
+                result[(row, col)] = result.get((row, col), 0) + 1
+            else:
+                result[(col, row)] = result.get((col, row), 0) + 1
 
     return result
 
+# # Solves the k-cardinality constrained 2-matching problem
+# def solve_k_card_2_matching(matrix, k):
+
+#     n = len(matrix)
+#     total = np.sum(np.abs(matrix)) + 1 # Arbitrary big number
+
+#     # Initialize bipartite graph with 4n - 2k nodes
+#     B = nx.Graph()
+#     B.add_nodes_from(list(range(n)), bipartite=0)
+#     B.add_nodes_from(list(range(n,2*n)), bipartite=1)
+#     B.add_nodes_from([x + 2 * n for x in list(range(n-k))], bipartite=0)
+#     B.add_nodes_from([x + 3 * n - k for x in list(range(n-k))], bipartite=1)
+
+#     edges = []
+
+#     # Add edges (u,v') and (v,u') for (u,v) in G to create assignment problem
+#     for i in range(n):
+#         for j in range(n):
+#             edges += [(i, j+n, -matrix[i][j]), (j, i+n, -matrix[i][j])]
+
+#     # Add low weight edges between dummy nodes
+#     for i in range(n-k):
+#         for j in range(n-k):
+#             edges += [(i + 2*n, j + 3*n-k, total)]
+
+#     # Between dummy nodes and real nodes add high weight edges (forced to pick)
+#     for i in range(n-k):
+#         for j in range(n):
+#             edges += [(i + 2*n, j + n, -total), (j, i + 3*n-k, -total)]
+
+#     B.add_weighted_edges_from(edges)
+
+#     # Solve min-weight matching with inverse weights, so max-weight matching
+#     matching = nx.bipartite.minimum_weight_full_matching(B)
+
+#     # Create a dictionary of edges based on the resulting matching, where value is multiplicity
+#     result = {}
+#     for v1, v2 in matching.items():
+#         if v1 >= n or v2 >= 2*n:
+#             continue
+#         v2 -= n
+#         if v1 <= v2:
+#             result[(v1,v2)] = result.get((v1,v2), 0) + 1
+#         else:
+#             result[(v2,v1)] = result.get((v2,v1), 0) + 1
+
+#     return result
+
 # Solves the (unbalanced) transportation problem with certain supplies and demands
-def solve_transportation(matrix, supplies, demands):
-    n1 = len(matrix)
-    n2 = len(matrix[0])
+def solve_transportation(matrix, supplies, demands, maximize=True):
+    matrix = np.asarray(matrix)
 
-    # Create flow graph with source and sink
-    G = nx.DiGraph()
-    G.add_nodes_from(list(range(n1 + n2 + 2)))
+    L = np.repeat(np.arange(len(supplies)), supplies)
+    R = np.repeat(np.arange(len(demands)), demands)
 
-    s = n1 + n2
-    t = n1 + n2 + 1
+    transportation_matrix = matrix[np.ix_(L, R)]
+    rows, cols = linear_sum_assignment(transportation_matrix, maximize=maximize)
+    
+    result = np.zeros(matrix.shape)
+    np.add.at(result, (L[rows], R[cols]), 1)
 
-    edges = []
+    return result
 
-    # Add source edges
-    for i in range(n1):
-        edges += [(s, i, {"capacity": int(supplies[i]), "weight": 0})]
+# # Solves the (unbalanced) transportation problem with certain supplies and demands
+# def solve_transportation(matrix, supplies, demands):
+#     n1 = len(matrix)
+#     n2 = len(matrix[0])
 
-    # Add sink edges
-    for i in range(n2):
-        edges += [(i+n1, t, {"capacity": int(demands[i]), "weight": 0})]
+#     # Create flow graph with source and sink
+#     G = nx.DiGraph()
+#     G.add_nodes_from(list(range(n1 + n2 + 2)))
 
-    # Add existing edges
-    for i in range(n1):
-        for j in range(n2):
-            # Use negative weights to get max cost
-            edges += [(i, j+n1, {"capacity": 2, "weight": -int(matrix[i][j])})]
+#     s = n1 + n2
+#     t = n1 + n2 + 1
 
-    G.add_edges_from(edges)
+#     edges = []
 
-    # Calculate flow
-    flow = nx.max_flow_min_cost(G, s, t)
-    return flow
+#     # Add source edges
+#     for i in range(n1):
+#         edges += [(s, i, {"capacity": int(supplies[i]), "weight": 0})]
+
+#     # Add sink edges
+#     for i in range(n2):
+#         edges += [(i+n1, t, {"capacity": int(demands[i]), "weight": 0})]
+
+#     # Add existing edges
+#     for i in range(n1):
+#         for j in range(n2):
+#             # Use negative weights to get max cost
+#             edges += [(i, j+n1, {"capacity": 2, "weight": -int(matrix[i][j])})]
+
+#     G.add_edges_from(edges)
+
+#     # Calculate flow
+#     flow = nx.max_flow_min_cost(G, s, t)
+#     return flow
 
 # Get the dominating set from a set of points
 def get_dominating_set(points):
@@ -135,15 +181,15 @@ def get_maximum_diversity(D, n):
 def get_minimum_cost(G, n):
 
     # Solve transportation
-    supplies = 2 * np.ones(n)
-    demands = 2 * np.ones(n)
-    flow = solve_transportation(-G, supplies, demands)
+    supplies = 2 * np.ones(n, dtype=int)
+    demands = 2 * np.ones(n, dtype=int)
+    flow = solve_transportation(G, supplies, demands, maximize=False)
 
     # Calculate weight of matchings
     cost = 0
     for i in range(n):
-        for j in range(n,2*n):
-            cost += flow[i][j] * G[i][j-n]
+        for j in range(n):
+            cost += flow[i][j] * G[i][j]
 
     return cost
 
@@ -151,14 +197,14 @@ def get_minimum_cost(G, n):
 def get_maximum_cost(G, n):
 
     # Solve transportation
-    supplies = 2 * np.ones(n)
-    demands = 2 * np.ones(n)
+    supplies = 2 * np.ones(n, dtype=int)
+    demands = 2 * np.ones(n, dtype=int)
     flow = solve_transportation(G, supplies, demands)
 
     # Calculate weight of matchings
     cost = 0
     for i in range(n):
-        for j in range(n,2*n):
-            cost += flow[i][j] * G[i][j-n]
+        for j in range(n):
+            cost += flow[i][j] * G[i][j]
 
     return cost
