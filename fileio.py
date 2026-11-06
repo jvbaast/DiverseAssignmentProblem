@@ -60,14 +60,9 @@ def read_timings(name):
     full_arr = np.loadtxt(name)
     return full_arr.T
 
-# Function for creating an empty file
-def create_empty_file(name):
-    f = open(name, "w")
-    f.close()
-
 # Function for appending a number to a file in a new line
-def file_append_num(name, num):
-    f = open(name, "a")
+def write_num(name, num):
+    f = open(name, "w")
     f.write(str(num) + "\n")
     f.close()
 
