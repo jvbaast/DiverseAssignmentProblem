@@ -4,6 +4,12 @@ import exact, algorithm,fileio
 
 exact.setup_env()
 
+inst_name = "uniform_div_100_64_6"
+(n, G, D) = fileio.load_file("data/" + inst_name)
+
+exact.setup_env()
+exact.get_pareto_front(G, D, n)
+
 sizes = [64]
 
 # generate_data.generate_datasets(sizes) # Comment out if already generated
