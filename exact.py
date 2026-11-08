@@ -43,7 +43,7 @@ def solve_ip(G, D, n, min_div):
     try:
         assignment = np.zeros((n,n))
         for v in model.getVars():
-            if v.X > 0.01:
+            if v.X > 0.5:
                 nums = [int(x) for x in v.VarName[2:-1].split(',')]
                 assignment[nums[0]][nums[1]] += 1
                 assignment[nums[0]][nums[2]] += 1
