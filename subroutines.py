@@ -100,40 +100,6 @@ def solve_transportation(matrix, supplies, demands, maximize=True):
 
     return result
 
-# # Solves the (unbalanced) transportation problem with certain supplies and demands
-# def solve_transportation(matrix, supplies, demands):
-#     n1 = len(matrix)
-#     n2 = len(matrix[0])
-
-#     # Create flow graph with source and sink
-#     G = nx.DiGraph()
-#     G.add_nodes_from(list(range(n1 + n2 + 2)))
-
-#     s = n1 + n2
-#     t = n1 + n2 + 1
-
-#     edges = []
-
-#     # Add source edges
-#     for i in range(n1):
-#         edges += [(s, i, {"capacity": int(supplies[i]), "weight": 0})]
-
-#     # Add sink edges
-#     for i in range(n2):
-#         edges += [(i+n1, t, {"capacity": int(demands[i]), "weight": 0})]
-
-#     # Add existing edges
-#     for i in range(n1):
-#         for j in range(n2):
-#             # Use negative weights to get max cost
-#             edges += [(i, j+n1, {"capacity": 2, "weight": -int(matrix[i][j])})]
-
-#     G.add_edges_from(edges)
-
-#     # Calculate flow
-#     flow = nx.max_flow_min_cost(G, s, t)
-#     return flow
-
 # Get the dominating set from a set of points
 def get_dominating_set(points):
     points.sort(reverse=True)
@@ -149,9 +115,7 @@ def get_dominating_set(points):
 def get_minimum_diversity(D, n):
 
     # Calculate optimal 2-matching with inverse weights
-    D = -D
-    two_matching = solve_k_card_2_matching(D, n)
-    D = -D
+    two_matching = solve_k_card_2_matching(D, n, maximize=False)
 
     # Calculate diversity
     diversity = 0

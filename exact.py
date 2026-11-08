@@ -78,6 +78,7 @@ def get_pareto_front(G, D, n):
 
     # Start recursive procedure
     while max_cost - min_cost > 0.5:
+        print("Cost: ", max_cost - min_cost, " Div: ", min_div)
         ass, cost, div = solve_ip(G, D, n, min_div + 1)
         result += [(cost, div)]
         min_div = div
