@@ -4,25 +4,15 @@ import exact, algorithm,fileio
 
 exact.setup_env()
 
-inst_name = "uniform_div_100_64_6"
-(n, G, D) = fileio.load_file("data/" + inst_name)
-
-exact.setup_env()
-exact.get_pareto_front(G, D, n)
-
-sizes = [64]
-
 # generate_data.generate_datasets(sizes) # Comment out if already generated
-
-assignments = [100]
-divs = ["uniform_div", "random_div"]
-
-pareto_tests.run_test(assignments, divs, sizes) # Comment out if already run
-pareto_tests.calculate_pareto_stats(assignments, divs, sizes) # Results in pareto/stats folder
 
 sizes = [4, 8, 16, 32, 64]
 assignments = [10, 100]
 divs = ["disjoint_div", "distance_div", "uniform_div", "random_div"]
+
+pareto_tests.run_test(assignments, divs, sizes) # Comment out if already run
+pareto_tests.calculate_pareto_stats(assignments, divs, sizes) # Results in pareto/stats folder
+
 # print()
 
 timing_test.run_timing_test_pareto(assignments, divs, sizes) # Comment out if already run
