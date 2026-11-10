@@ -4,17 +4,19 @@ import exact, algorithm,fileio, subroutines
 
 exact.setup_env()
 
-inst_name = "uniform_div_100_64_6"
-(n, G, D) = fileio.load_file("data/" + inst_name)
+for i in range(10):
+    inst += 1
+    inst_name = "uniform_div" + "_" + str(100) + "_"+ str(16) + "_" + str(i)
+    (n, G, D) = fileio.load_file("data/" + inst_name)
 
-min_div = subroutines.get_minimum_diversity(D, n)
-max_div = subroutines.get_maximum_diversity(D, n)
+    min_div = subroutines.get_minimum_diversity(D, n)
+    max_div = subroutines.get_maximum_diversity(D, n)
 
-# Get upper and lower bounds and quality
-ass, max_cost, div = exact.solve_ip(G, D, n, min_div)
-ass, min_cost, div = exact.solve_ip(G, D, n, max_div)
+    # Get upper and lower bounds and quality
+    ass, max_cost, div = exact.solve_ip(G, D, n, min_div)
+    ass, min_cost, div = exact.solve_ip(G, D, n, max_div)
 
-print("Min Div: ", min_div, max_cost, " Max Div: ", max_div, min_cost)
+    print("Min Div: ", min_div, max_cost, " Max Div: ", max_div, min_cost)
 
 # exact.get_pareto_front(G, D, n)
 
