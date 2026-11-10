@@ -1,13 +1,20 @@
 import generate_data
 import timing_test, pareto_tests
-import exact, algorithm,fileio
+import exact, algorithm,fileio, subroutines
 
 exact.setup_env()
 
 inst_name = "uniform_div_100_64_6"
 (n, G, D) = fileio.load_file("data/" + inst_name)
 
-exact.get_pareto_front(G, D, n)
+min_div = subroutines.get_minimum_diversity(D, n)
+max_div = subroutines.get_maximum_diversity(D, n)
+
+# Get upper and lower bounds and quality
+ass, max_cost, div = exact.solve_ip(G, D, n, min_div)
+ass, min_cost, div = exact.solve_ip(G, D, n, max_div)
+
+# exact.get_pareto_front(G, D, n)
 
 # sizes = [64]
 
