@@ -5,7 +5,6 @@ import exact, algorithm,fileio, subroutines
 exact.setup_env()
 
 for i in range(10):
-    inst += 1
     inst_name = "uniform_div" + "_" + str(100) + "_"+ str(16) + "_" + str(i)
     (n, G, D) = fileio.load_file("data/" + inst_name)
 
