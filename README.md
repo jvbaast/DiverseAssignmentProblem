@@ -20,13 +20,13 @@ This file is used for running the functions implemented in other files. This fil
 This file contains the implementation of the heuristic described in Section 3 of the paper. We implement one iteration separately and then loop over all values of $k$ in a different function.
 
 #### subroutines.py
-Contains the subroutines used by ```Algorithm.py``` including:
+Contains the subroutines used by ```algorithm.py``` including:
 1. Solving the cardinality-contrained 2-matching problem.
 2. Solving the (unbalanced) transporation problem.
 3. Getting the dominating set from a set of points.
 4. Finding solutions with minimum assignment weight and diversity weight.
 
-The graph algorithms in these subroutines are implemented using NetworkX [2].
+The assignment problems in these subroutines are solved using SciPy [2].
 
 #### exact.py
 This file contains the implementation of the exact algorithm. This includes the implementation of the ILP using Gurobi [1] and an iterative procedure to get the Pareto front.
@@ -37,7 +37,7 @@ This file implements the tests for the relative area measure and the number of s
 2. Statistic calculation: Calculates the results of the tests for the given instances. This can be used to calculate statistics for different subsets of instances. 
 
 #### timing_test.py
-This file implements the timing tests. These were removed from the paper, but are still provided. It again has two main modes:
+This file implements the timing tests. It again has two main modes:
 1. Preprocessing: Runs the timing tests for the given parameters. This takes a lot of time, so do not run it unless needed.
 2. Statistic calculation: Calculates the results of the tests for the given instances. This can be used to calculate statistics for different subsets of instances. 
 
@@ -54,13 +54,11 @@ This file contains the functions for reading and writing solutions, instances an
 ## Installation
 1. Clone this repository
 2. Ensure you have Python 3.0 and Pip installed.
-3. Install the required packages by running the command ```pip install requirement.txt```
+3. Install the required packages by running the command ```pip install -r requirement.txt```
 4. Configure and run main.py
 
 ## References
 [1] Gurobi Optimization, LLC. Gurobi Optimizer Reference Manual. 2025. url: [https://www.
 gurobi.com.]()
 
-[2] A. A. Hagberg, D. A. Schult, and P. J. Swart. “Exploring network structure, dynamics, and
-function using NetworkX.” In: Proceedings of the 7th Python in Science Conference (SciPy2008).
-2008, pp. 11–15.
+[2] P. Virtanen, R. Gommers, T. E. Oliphant, M. Haberland, T. Reddy, D. Cournapeau, E. Burovski, P. Peterson, W. Weckesser, J. Bright, S. J. van der Walt, M. Brett, J. Wilson, K. J. Millman, N. Mayorov, A. R. J. Nelson, E. Jones, R. Kern, E. Larson, C. J. Carey, İ. Polat, Y. Feng, E. W. Moore, J. VanderPlas, D. Laxalde, J. Perktold, R. Cimrman, I. Henriksen, E. A. Quintero, C. R. Harris, A. M. Archibald, A. H. Ribeiro, F. Pedregosa, P. van Mulbregt, SciPy 1.0 Contributors, SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python, Nature Methods 17 (2020) 261-272
