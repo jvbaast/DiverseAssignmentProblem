@@ -14,6 +14,8 @@ max_div = subroutines.get_maximum_diversity(D, n)
 ass, max_cost, div = exact.solve_ip(G, D, n, min_div)
 ass, min_cost, div = exact.solve_ip(G, D, n, max_div)
 
+print("Min Div: ", min_div, max_cost, " Max Div: ", max_div, min_cost)
+
 # exact.get_pareto_front(G, D, n)
 
 # sizes = [64]
